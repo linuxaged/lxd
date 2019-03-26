@@ -10,8 +10,8 @@ int main()
         i++;
     } while (i < 100);
 
-    for (size_t n=0; n < vec.size(); ++n) {
-        printf("%d\n", vec[n]);
+    for (auto const v : vec) {
+        printf("%d\n", v);
     }
     return 0;
 }

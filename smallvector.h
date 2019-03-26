@@ -44,6 +44,56 @@ void SmallVector<T,N>::push_back(T const &e)
     _heapData[_size++] = e;
 };
 
+template <typename T, typename C, size_t const N>
+class SmallVectorIteratorType
+{
+public:
+    SmallVectorIteratorType(C &container, size_t const index) : _container(container), _index(index){}
+    bool operator!=(SmallVectorIteratorType const &other) const { return _index != other._index; }
+    T const &operator*() const { return _container[_index]; }
+    SmallVectorIteratorType const &operator++() { ++_index; return *this; }
+private:
+    C &_container;
+    size_t _index;
+};
+
+template <typename T, size_t const N>
+using SmallVectorIterator = SmallVectorIteratorType<T, SmallVector<T, N>, N>;
+
+template <typename T, size_t const N>
+using SmallVectorConstIterator = SmallVectorIteratorType<T, SmallVector<T, N> const, N>;
+
+template <typename T, size_t const N>
+inline SmallVectorIterator<T, N> begin(
+  SmallVector<T, N> &container)
+{
+  return SmallVectorIterator<T, N>(container, 0);
+}
+
+template <typename T, size_t const N>
+inline SmallVectorIterator<T, N> end(
+  SmallVector<T, N> &container)
+{
+  return SmallVectorIterator<T, N>(
+    container, container.size());
+}
+
+template <typename T, size_t const N>
+inline SmallVectorConstIterator<T, N> begin(
+  SmallVector<T, N> const &container)
+{
+  return SmallVectorConstIterator<T, N>(
+    container, 0);
+}
+
+template <typename T, size_t const N>
+inline SmallVectorConstIterator<T, N> end(
+  SmallVector<T, N> const &container)
+{
+  return SmallVectorConstIterator<T, N>(
+    container, container.size());
+}
+
 }
 
 #endif // SMALLVECTOR_H
