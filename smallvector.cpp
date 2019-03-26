@@ -1,6 +1,5 @@
 #include "smallvector.h"
 
-SmallVector::SmallVector()
-{
+namespace lxd {
 
 }
