@@ -4,8 +4,59 @@
 #include <array>
 
 namespace lxd {
+template <typename T, std::size_t Capacity>
+class SmallVectorIter;
+}
 
-template<typename T, size_t N>
+namespace std {
+    template<typename T, std::size_t Capacity>
+    class iterator_traits<lxd::SmallVectorIter<T,Capacity> >
+    {
+    public:
+        using difference_type = std::ptrdiff_t;
+        using size_type = std::size_t;
+        using value_type = T;
+        using pointer = T*;
+        using reference = T&;
+        using iterator_category = std::random_access_iterator_tag;
+    };
+}
+
+namespace lxd {
+
+template<typename T, std::size_t Capacity>
+class SmallVectorIter
+{
+    T * buf;
+    std::size_t off;
+public:
+    SmallVectorIter(T *buf, std::size_t off)
+        : buf(buf), off(off)
+    {}
+
+
+    bool operator==(const SmallVectorIter &i) {
+        return i.buf == buf && i.off == off;
+    }
+    bool operator!=(const SmallVectorIter &i) {
+        return !(*this == i);
+    }
+    SmallVectorIter & operator++()    { ++off; return *this; }
+    SmallVectorIter operator++(int) { auto t = *this; ++off; return t; }
+    SmallVectorIter & operator--()    { --off; return *this; }
+    SmallVectorIter operator--(int) { auto t = *this; --off; return t; }
+    std::ptrdiff_t operator-(SmallVectorIter const& sibling) const { return off - sibling.off; }
+    SmallVectorIter & operator+=(int amount) { off += amount; return *this; }
+    SmallVectorIter & operator-=(int amount) { off -= amount; return *this; }
+    bool operator<(SmallVectorIter const&sibling) const { return off < sibling.off;}
+    bool operator<=(SmallVectorIter const&sibling) const { return off <= sibling.off; }
+    bool operator>(SmallVectorIter const&sibling) const { return off > sibling.off; }
+    bool operator>=(SmallVectorIter const&sibling) const { return off >= sibling.off; }
+    T& operator[](int index) const { return *(*this + index); }
+    T& operator*() const { return buf[off]; }
+};
+
+template<typename T, size_t const N>
 class SmallVector
 {
 public:
@@ -16,20 +67,34 @@ public:
     void push_back(T const &e);
 
     size_t size() const {return _size;}
+    size_t capacity() const {return _capacity;}
 private:
     std::array<T, N> _stackData;
     size_t _size;
     size_t _capacity;
     T *_heapData;
+public:
+    using iterator = SmallVectorIter<T, N>;
+    using const_iterator = SmallVectorIter<const T, N>;
+    using reverse_iterator = std::reverse_iterator<iterator>;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+
+    iterator begin() { return { _heapData, 0 }; }
+    iterator end() { return {_heapData, _size}; }
+    const_iterator begin() const { return {_heapData, 0}; }
+    const_iterator end() const { return {_heapData, _size}; }
+    const_iterator cbegin() const { return begin(); }
+    const_iterator cend() const { return end(); }
+
+    reverse_iterator rbegin() { return reverse_iterator{end()}; }
+    reverse_iterator rend() { return reverse_iterator{begin()}; }
+    const_reverse_iterator rbegin() const { return const_reverse_iterator{end()}; }
+    const_reverse_iterator rend() const { return const_reverse_iterator{begin()}; }
+    const_reverse_iterator crbegin() const { return rbegin(); }
+    const_reverse_iterator crend() const { return rend(); }
 };
 
-template<typename T, size_t N>
-T &SmallVector<T,N>::operator[](size_t n)
-{
-   return _heapData[n];
-};
-
-template<typename T, size_t N>
+template<typename T, size_t const N>
 void SmallVector<T,N>::push_back(T const &e)
 {
     if (_size == _capacity) {
@@ -44,55 +109,6 @@ void SmallVector<T,N>::push_back(T const &e)
     _heapData[_size++] = e;
 };
 
-template <typename T, typename C, size_t const N>
-class SmallVectorIteratorType
-{
-public:
-    SmallVectorIteratorType(C &container, size_t const index) : _container(container), _index(index){}
-    bool operator!=(SmallVectorIteratorType const &other) const { return _index != other._index; }
-    T const &operator*() const { return _container[_index]; }
-    SmallVectorIteratorType const &operator++() { ++_index; return *this; }
-private:
-    C &_container;
-    size_t _index;
-};
-
-template <typename T, size_t const N>
-using SmallVectorIterator = SmallVectorIteratorType<T, SmallVector<T, N>, N>;
-
-template <typename T, size_t const N>
-using SmallVectorConstIterator = SmallVectorIteratorType<T, SmallVector<T, N> const, N>;
-
-template <typename T, size_t const N>
-inline SmallVectorIterator<T, N> begin(
-  SmallVector<T, N> &container)
-{
-  return SmallVectorIterator<T, N>(container, 0);
-}
-
-template <typename T, size_t const N>
-inline SmallVectorIterator<T, N> end(
-  SmallVector<T, N> &container)
-{
-  return SmallVectorIterator<T, N>(
-    container, container.size());
-}
-
-template <typename T, size_t const N>
-inline SmallVectorConstIterator<T, N> begin(
-  SmallVector<T, N> const &container)
-{
-  return SmallVectorConstIterator<T, N>(
-    container, 0);
-}
-
-template <typename T, size_t const N>
-inline SmallVectorConstIterator<T, N> end(
-  SmallVector<T, N> const &container)
-{
-  return SmallVectorConstIterator<T, N>(
-    container, container.size());
-}
 
 }
 
