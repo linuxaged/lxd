@@ -63,7 +63,7 @@ public:
     SmallVector() : _size(0), _capacity(N), _heapData(_stackData.data())
     {
     }
-    T &operator[](size_t n);
+    T &operator[](size_t n) { return _heapData[n]; }
     void push_back(T const &e);
 
     size_t size() const {return _size;}
