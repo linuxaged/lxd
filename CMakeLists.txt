@@ -1,8 +1,6 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.14)
 
 project(lxd)
 
-add_executable(lxd "src/main.cpp" "src/smallvector.cpp")
-
-target_compile_options( lxd PRIVATE -Wall )
-target_compile_features( lxd PRIVATE cxx_std_17 )
+add_subdirectory( ./src lxd )
+add_subdirectory( ./test test )
