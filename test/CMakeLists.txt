@@ -1,20 +1,15 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
 
-PROJECT(SmallVector
+PROJECT(lxd-test
         LANGUAGES CXX)
 
+find_package(Catch2 CONFIG REQUIRED)
 
-find_package(Qt5Test REQUIRED)
-find_package(Qt5Gui REQUIRED)
+add_executable(${PROJECT_NAME} test_fileio.cpp)
 
-SET(CMAKE_AUTOMOC ON)
-SET(CMAKE_INCLUDE_CURRENT_DIR ON)
-SET(CMAKE_CXX_STANDARD 11)
-SET(CMAKE_CXX_STANDARD_REQUIRED ON)
-ENABLE_TESTING()
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17 )
 
-add_executable(${PROJECT_NAME} tst_smallvector.cpp)
-add_test(${PROJECT_NAME} COMMAND ${PROJECT_NAME})
+target_include_directories(${PROJECT_NAME} PRIVATE ../src)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Gui Qt5::Test)
+target_link_libraries(${PROJECT_NAME} PRIVATE Catch2::Catch2 lxd)
 
