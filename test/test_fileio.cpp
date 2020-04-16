@@ -13,7 +13,12 @@ TEST_CASE("Factorials are computed", "[factorial]") {
     REQUIRE(Factorial(10) == 3628800);
 }
 
+TEST_CASE("Write string to file", "[WriteIntoString]") {
+    char const* text = u8"ÄãºÃ£¡";
+    REQUIRE(true == lxd::WriteIntoFile(L"test.txt", text, strlen(text)));
+}
+
 TEST_CASE("Read file into string", "[ReadIntoString]") {
-    auto str = lxd::ReadIntoString(L"C:\\workspace\\lxd\\CMakeLists.txt");
+    auto str = lxd::ReadIntoString(L"test.txt");
     printf("%s\n", str.c_str());
 }
