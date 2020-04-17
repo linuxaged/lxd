@@ -45,7 +45,7 @@ namespace lxd {
 		return CreateFile2(path.data(), accessRights, shareMode, creationDisp, &param);
 	}
 
-	bool WriteIntoFile(std::wstring_view path, char const* buffer, size_t bufferSize) {
+	bool fwrite(std::wstring_view path, char const* buffer, size_t bufferSize) {
 		// open the file
 		auto handle = OpenFile(path, OpenMode::WriteOnly);
 		if(INVALID_HANDLE_VALUE == handle) {
@@ -66,10 +66,10 @@ namespace lxd {
 		return true;
 	}
 
-	std::string ReadIntoString(std::string_view path) {
+	std::string fread(std::string_view path) {
 		return std::string();
 	}
-	std::string ReadIntoString(std::wstring_view path) {
+	std::string fread(std::wstring_view path) {
 		// open the file
 		auto handle = OpenFile(path, OpenMode::ReadOnly);
 		if(INVALID_HANDLE_VALUE == handle) {
