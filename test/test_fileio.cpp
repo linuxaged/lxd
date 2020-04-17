@@ -2,6 +2,7 @@
 #include <catch.hpp>
 #include "fileio.h"
 #include "encoding.h"
+#include "timer.h"
 
 unsigned int Factorial(unsigned int number) {
     return number <= 1 ? number : Factorial(number - 1) * number;
@@ -22,4 +23,11 @@ TEST_CASE("Write string to file", "[WriteIntoString]") {
 TEST_CASE("Read file into string", "[ReadIntoString]") {
     auto str = lxd::fread(L"test.txt");
     printf("%s\n", lxd::utf8_decode(str).c_str());
+}
+
+TEST_CASE("Timer ", "[Timer]") {
+    auto start = lxd::millisecond();
+    lxd::sleep(1000);
+    auto end = lxd::millisecond();
+    printf("timer: %f\n", end - start);
 }

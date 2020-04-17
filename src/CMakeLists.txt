@@ -1,6 +1,8 @@
 cmake_minimum_required( VERSION 3.14.0 )
 
 add_library( lxd STATIC
+	timer.h
+	timer.cpp
 	encoding.h
 	encoding.cpp
 	fileio.h
