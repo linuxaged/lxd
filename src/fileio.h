@@ -2,6 +2,8 @@
 
 #include "defines.h"
 #include <string_view>
+#include <vector>
+#include <string>
 
 namespace lxd {
 	enum OpenMode : short {
@@ -24,4 +26,5 @@ namespace lxd {
 	DLL_PUBLIC bool CreateDir(std::wstring_view path);
 	DLL_PUBLIC int DeleteDir(std::wstring_view path, bool bDeleteSubdirectories = true);
 	DLL_PUBLIC bool DirExists(std::wstring_view path);
+	DLL_PUBLIC bool ListDir(std::wstring_view path, std::vector<std::wstring>& result, bool recursive = false);
 }

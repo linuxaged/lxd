@@ -1,8 +1,10 @@
 ﻿#define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include <catch.hpp>
+#include <fmt/format.h>
 #include "fileio.h"
 #include "encoding.h"
 #include "timer.h"
+#include "debug.h"
 
 unsigned int Factorial(unsigned int number) {
     return number <= 1 ? number : Factorial(number - 1) * number;
@@ -30,7 +32,20 @@ TEST_CASE("Write string to file", "[WriteIntoString]") {
 
 TEST_CASE("Read file into string", "[ReadIntoString]") {
     auto str = lxd::ReadFile(L"D:\\Download\\test_lxd\\test.txt");
-    printf("%s\n", lxd::utf8_decode(str).c_str());
+    wprintf(L"%s\n", lxd::utf8_decode(str).c_str());
+}
+
+TEST_CASE("List directory", "[ListDir]") {
+    for(int i = 0; i < 10; ++i) {
+        lxd::CreateDir(fmt::format(L"D:\\Download\\test_lxd\\dir{}", i));
+        char const* text = u8"测试";
+        lxd::WriteFile(fmt::format(L"D:\\Download\\test_lxd\\dir{}\\{}.txt", i, i), text, strlen(text));
+    }
+    std::vector<std::wstring> files;
+    lxd::ListDir(L"D:\\Download\\test_lxd", files, true);
+    for(auto const& f : files) {
+        wprintf(L"%s\n", f.c_str());
+    }
 }
 
 TEST_CASE("Delete Dir", "[lxd::DeleteDir]") {

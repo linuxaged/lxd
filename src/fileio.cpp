@@ -151,4 +151,33 @@ namespace lxd {
 		DWORD attrib = GetFileAttributesW(path.data());
 		return (attrib != INVALID_FILE_ATTRIBUTES) && (attrib & FILE_ATTRIBUTE_DIRECTORY);
 	}
+
+	 bool ListDir(std::wstring_view path, std::vector<std::wstring>& result, bool recursive) {
+		auto searchPath = fmt::format(L"{}\\*", path);
+		WIN32_FIND_DATAW FindFileData;
+		HANDLE hFind = FindFirstFileW(searchPath.data(), &FindFileData);
+		if(hFind == INVALID_HANDLE_VALUE) {
+			return false;
+		}
+
+		do {
+			static std::wstring currentPath;
+			if(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+				if(!wcscmp(L".", FindFileData.cFileName) || !wcscmp(L"..", FindFileData.cFileName)) {
+					continue;
+				}
+				if(recursive) {
+					auto searchPath2 = fmt::format(L"{}\\{}", path, FindFileData.cFileName);
+					currentPath = FindFileData.cFileName;
+					ListDir(searchPath2.data(), result, recursive);
+				}
+			} else {
+				result.push_back(fmt::format(L"{}\\{}", currentPath, FindFileData.cFileName));
+			}
+		} while(FindNextFileW(hFind, &FindFileData) != 0);
+
+		FindClose(hFind);
+
+		return true;
+	}
 }
