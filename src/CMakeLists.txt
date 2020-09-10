@@ -17,6 +17,12 @@ add_library( lxd STATIC
     smallvector.h
     http.h
     http.cpp
+    ascii.h
+    ascii.cpp
+    int128.h
+    int128.cpp
+    numbers.h
+    numbers.cpp
 )
 
 target_compile_options( lxd PRIVATE -Wall )
