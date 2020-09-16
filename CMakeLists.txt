@@ -4,3 +4,4 @@ project(lxd)
 
 add_subdirectory( ./src lxd )
 add_subdirectory( ./test test )
+add_subdirectory( ./benchmark benchmark )

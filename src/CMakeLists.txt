@@ -23,9 +23,13 @@ add_library( lxd STATIC
     int128.cpp
     numbers.h
     numbers.cpp
+    crypt.h
+    crypt.cpp
+    base64.h
+    base64.cpp
 )
 
 target_compile_options( lxd PRIVATE -Wall )
 target_compile_definitions( lxd PUBLIC -DBUILDING_DLL )
 target_compile_features( lxd PRIVATE cxx_std_17 )
-target_link_libraries( lxd PUBLIC fmt::fmt fmt::fmt-header-only Winhttp )
+target_link_libraries( lxd PUBLIC fmt::fmt fmt::fmt-header-only Winhttp Bcrypt)

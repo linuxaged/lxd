@@ -6,6 +6,8 @@
 #include "timer.h"
 #include "debug.h"
 #include "numbers.h"
+#include "crypt.h"
+#include "base64.h"
 
 TEST_CASE("String 2 float", "[lxd::SimpleAtof]") {
     float pi;
@@ -37,7 +39,20 @@ TEST_CASE("String 2 int", "[lxd::SimpleAtoi]") {
     REQUIRE(pi == -314);
     REQUIRE(lxd::SimpleAtoi("0x314", &pi) == false);
 }
- 
+
+TEST_CASE("SHA256", "[lxd::hash_sha256]") {
+    const char* content = "Hello World!";
+    auto sha = lxd::hash(lxd::SHA256, content, strlen(content));
+    lxd::WriteFile(L"D:\\Download\\0.sha256", (const char*)sha.data(), sha.size());
+    auto bsize = lxd::Base64_EncodeSizeInBytes(sha.size());
+    std::string base64;
+    base64.resize(bsize);
+    lxd::Base64_Encode(base64.data(), sha.data(), sha.size());
+    auto hex = lxd::hex_encode(sha.data(), sha.size());
+    lxd::print("{}\n", base64);
+    lxd::print("{}\n", hex);
+}
+
 //TEST_CASE("Create Dir", "[lxd::CreateDir]") {
 //    REQUIRE(lxd::CreateDir(L"D:\\Download\\test_lxd"));
 //}
